@@ -4,15 +4,12 @@ import com.google.common.annotations.VisibleForTesting;
 import dev.alangomes.springspigot.configuration.DynamicValue;
 import dev.alangomes.springspigot.configuration.Instance;
 import dev.alangomes.springspigot.picocli.CommandLineDefinition;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandException;
+import org.slf4j.Logger;
 import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -27,12 +24,12 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
-@Slf4j
 @Primary
 @Component
 @ConditionalOnBean(annotation = CommandLine.Command.class)
 public class DefaultCommandExecutor implements CommandExecutor {
 
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultCommandExecutor.class);
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -42,21 +39,16 @@ public class DefaultCommandExecutor implements CommandExecutor {
     @Autowired
     private CommandLineDefinition cli;
 
-    @Setter(value = AccessLevel.PACKAGE, onMethod_ = @VisibleForTesting)
     @DynamicValue("${spigot.messages.command_error:&cAn internal error occurred while attemping to perform this " +
             "command}")
     private Instance<String> commandErrorMessage;
 
-    @Setter(value = AccessLevel.PACKAGE, onMethod_ = @VisibleForTesting)
     @DynamicValue("${spigot.messages.missing_parameter_error:&cMissing parameter: %s}")
     private Instance<String> missingParameterErrorMessage;
 
-    @Setter(value = AccessLevel.PACKAGE, onMethod_ = @VisibleForTesting)
     @DynamicValue("${spigot.messages.parameter_error:&cInvalid parameter: %s}")
     private Instance<String> parameterErrorMessage;
 
-    @Getter(value = AccessLevel.PACKAGE, onMethod_ = @VisibleForTesting)
-    @Setter(value = AccessLevel.PACKAGE, onMethod_ = @VisibleForTesting)
     @DynamicValue("${spigot.commands.enable_cache:false}")
     private Instance<Boolean> cacheEnabled;
 
@@ -93,7 +85,7 @@ public class DefaultCommandExecutor implements CommandExecutor {
             return CommandResult.unknown();
         } catch (CommandLine.UnmatchedArgumentException ex) {
             val commandObject = ex.getCommandLine().getCommandSpec().userObject();
-            if (commandObject == null || getBaseCommandClass().isInstance(commandObject)){
+            if (commandObject == null || getBaseCommandClass().isInstance(commandObject)) {
                 return CommandResult.unknown();
             }
             val message = String.format(parameterErrorMessage.get(), String.join(", ", ex.getUnmatched()));
@@ -130,4 +122,28 @@ public class DefaultCommandExecutor implements CommandExecutor {
         return Class.forName("dev.alangomes.springspigot.picocli.BaseCommand");
     }
 
+    @VisibleForTesting
+    Instance<Boolean> getCacheEnabled() {
+        return this.cacheEnabled;
+    }
+
+    @VisibleForTesting
+    void setCommandErrorMessage(Instance<String> commandErrorMessage) {
+        this.commandErrorMessage = commandErrorMessage;
+    }
+
+    @VisibleForTesting
+    void setMissingParameterErrorMessage(Instance<String> missingParameterErrorMessage) {
+        this.missingParameterErrorMessage = missingParameterErrorMessage;
+    }
+
+    @VisibleForTesting
+    void setParameterErrorMessage(Instance<String> parameterErrorMessage) {
+        this.parameterErrorMessage = parameterErrorMessage;
+    }
+
+    @VisibleForTesting
+    void setCacheEnabled(Instance<Boolean> cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
 }

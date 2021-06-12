@@ -1,7 +1,6 @@
 package dev.alangomes.springspigot.util.scheduler;
 
 import dev.alangomes.springspigot.context.Context;
-import lombok.AllArgsConstructor;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -11,12 +10,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 
-@AllArgsConstructor
 public class SpigotScheduler extends ThreadPoolTaskScheduler {
 
     private final SchedulerService scheduler;
 
     private final Context context;
+
+    public SpigotScheduler(SchedulerService scheduler, Context context) {
+        this.scheduler = scheduler;
+        this.context = context;
+    }
 
     private Runnable wrapSync(Runnable task) {
         return new WrappedRunnable(scheduler, task);

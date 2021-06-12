@@ -1,22 +1,19 @@
 package dev.alangomes.springspigot.command;
 
-import lombok.Value;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-@Value
-public class CommandResult {
+public final class CommandResult {
 
     private static final CommandResult UNKNOWN_COMMAND = new CommandResult(null, false, false);
 
-    boolean errored;
+    private final boolean errored;
 
-    boolean exists;
+    private final boolean exists;
 
-    List<String> output;
+    private final List<String> output;
 
     private CommandResult(Collection<String> output, boolean errored, boolean exists) {
         this.errored = errored;
@@ -36,4 +33,41 @@ public class CommandResult {
         return UNKNOWN_COMMAND;
     }
 
+    public boolean isErrored() {
+        return this.errored;
+    }
+
+    public boolean isExists() {
+        return this.exists;
+    }
+
+    public List<String> getOutput() {
+        return this.output;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof CommandResult)) return false;
+        final CommandResult other = (CommandResult) o;
+        if (this.isErrored() != other.isErrored()) return false;
+        if (this.isExists() != other.isExists()) return false;
+        final Object this$output = this.getOutput();
+        final Object other$output = other.getOutput();
+        if (this$output == null ? other$output != null : !this$output.equals(other$output)) return false;
+        return true;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        result = result * PRIME + (this.isErrored() ? 79 : 97);
+        result = result * PRIME + (this.isExists() ? 79 : 97);
+        final Object $output = this.getOutput();
+        result = result * PRIME + ($output == null ? 43 : $output.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "CommandResult(errored=" + this.isErrored() + ", exists=" + this.isExists() + ", output=" + this.getOutput() + ")";
+    }
 }

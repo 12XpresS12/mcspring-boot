@@ -12,7 +12,8 @@
 ## Features
 
 - Easy setup
-- Full [Picocli](http://picocli.info/) `@Command` support (thanks to [picocli-spring-boot-starter](https://github.com/kakawait/picocli-spring-boot-starter)) 
+- Full [Picocli](http://picocli.info/) `@Command` support (thanks
+  to [picocli-spring-boot-starter](https://github.com/kakawait/picocli-spring-boot-starter))
 - Secure calls with `@Authorize`
 - Automatic `Listener` registration
 - Session system
