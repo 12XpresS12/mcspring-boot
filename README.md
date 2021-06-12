@@ -1,6 +1,9 @@
 # Spring Boot Spigot Starter
 
-> A Spring boot starter for Bukkit/Spigot/PaperSpigot plugins
+> A Spring boot starter for 1.16.5+ - Bukkit/Spigot/PaperSpigot plugins
+> 
+> Support Java version 16, major version 60.
+#### Forked by XpresS for WestLand.sk.
 
 ## Features
 
@@ -17,7 +20,5 @@
 
 Check the [wiki](https://github.com/Alan-Gomes/mcspring-boot/wiki/Getting-started) for usage instructions :) 
 
-Forked by XpresS for WestLand.sk.
 
-Spring support 1.16.5 yatopia / papermc / spigotmc.
-Support Java version 16,Major version 60.
+
