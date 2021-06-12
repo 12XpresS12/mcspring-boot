@@ -65,7 +65,6 @@ class WrappedCommand extends Command {
     }
 
 
-
     private static <T> T[] prepend(T[] oldArray, T item) {
         val newArray = (T[]) Array.newInstance(oldArray.getClass().getComponentType(), oldArray.length + 1);
         System.arraycopy(oldArray, 0, newArray, 1, oldArray.length);

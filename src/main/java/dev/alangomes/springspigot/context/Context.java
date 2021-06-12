@@ -1,7 +1,6 @@
 package dev.alangomes.springspigot.context;
 
 import dev.alangomes.springspigot.util.ServerUtil;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.command.CommandSender;
@@ -25,13 +24,16 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Scope(SCOPE_SINGLETON)
 public class Context {
 
-    @Getter
     private static Context instance;
 
     @Autowired
     private ServerUtil serverUtil;
 
     private final Map<Long, String> senderRefs = new ConcurrentHashMap<>();
+
+    public static Context getInstance() {
+        return Context.instance;
+    }
 
     @PostConstruct
     void init() {
@@ -54,7 +56,12 @@ public class Context {
             senderRefs.remove(threadId);
             return;
         }
-        senderRefs.put(threadId, serverUtil.getSenderId(sender));
+        senderRefs
+                .put(
+                        threadId,
+                        serverUtil
+                                .getSenderId(
+                                        sender));
     }
 
     /**

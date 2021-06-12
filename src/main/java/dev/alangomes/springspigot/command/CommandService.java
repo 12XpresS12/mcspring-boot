@@ -2,15 +2,14 @@ package dev.alangomes.springspigot.command;
 
 import dev.alangomes.springspigot.context.Context;
 import dev.alangomes.springspigot.picocli.CommandLineDefinition;
-import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -33,13 +32,13 @@ import java.util.stream.Collectors;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
-@Slf4j
 @Component
 @Scope(SCOPE_SINGLETON)
 @ConditionalOnBean(annotation = CommandLine.Command.class)
 class CommandService {
 
     private static final String DEFAULT_COMMAND_NAME = "<main class>";
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(CommandService.class);
 
     @Autowired
     private CommandLineDefinition commandLineDefinition;
@@ -59,7 +58,6 @@ class CommandService {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Getter
     private boolean registered;
 
     private Class<?> bukkitClass;
@@ -91,11 +89,20 @@ class CommandService {
 
     @SneakyThrows
     public void registerCommand(CommandSpec commandSpec) {
-        val commandMapField = bukkitClass.getDeclaredField("commandMap");
-        commandMapField.setAccessible(true);
-        val commandMap = (SimpleCommandMap) commandMapField.get(plugin.getServer());
-
-        commandMap.register(plugin.getName().toLowerCase(), new WrappedCommand(commandSpec, context, commandExecutor));
+        try {
+            val commandMapField = bukkitClass.getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            val commandMap = (SimpleCommandMap) commandMapField.get(plugin.getServer());
+            commandMap
+                    .register(
+                            plugin.getName().toLowerCase(),
+                            new WrappedCommand(
+                                    commandSpec,
+                                    context,
+                                    commandExecutor));
+        } catch (UnsupportedOperationException ex) {
+            System.out.println("Exception:  UnsupportedOperationException on line (100)");
+        }
     }
 
     @SneakyThrows
@@ -135,4 +142,7 @@ class CommandService {
         return t -> seen.add(keyExtractor.apply(t));
     }
 
+    public boolean isRegistered() {
+        return this.registered;
+    }
 }
